@@ -20,7 +20,7 @@ From [CLMD12UM_1.8 Appendix A](docs/CLMD12UM_1.8.pdf).
 
 __CLMD12 NMEA 2000® Periodic Data Transmitted PGNs__
 
-* PGN 127500 – Load Controller Connection State/Control
+* PGN 127500 (0x1F20C) – Load Controller Connection State/Control
 
   The CLMD12 uses this PGN to transmit the state of each of the breakers. A separate occurrence
   of this message will be transmitted for each breaker. The state of each breaker may be controlled
@@ -39,7 +39,7 @@ under the control of a Flash Map.
   * Field 8: TimeOFF – This field is used to report the OFF time if the solid-state breaker is running
 under the control of a Flash Map.
 
-* PGN 127501 – Binary Status Report
+* PGN 127501 (0x1F20D) – Binary Status Report
 
   The CLMD12 uses this PGN to transmit the state of each of the breakers and connected switch
   inputs. The state of the breakers may be controlled by issuing a 126208 NMEA Command for
