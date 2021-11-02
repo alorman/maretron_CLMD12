@@ -16,9 +16,60 @@ To establish N2K comms you need to:
 
 ## NMEA 2000 Messags
 
+### Command messages (PGN 126208)
+
+The CLMD12 allows for control of circuit breaker states through PGN 126208 (Request/Command/Acknowledge Group Function).
+
+This PGN message has a number of different uses which are conveniently (unintentionally?) publicly described
+in this pdf from the NMEA organization: https://www.nmea.org/Assets/20140109%20nmea-2000-corrigendum-tc201401031%20pgn%20126208.pdf
+
+
+According to the N2K documentation, there are seven different ways this PGN can be used/formatted... which is kind of
+obnoxious in my (James) oppinion. These seven different message intrpretations are distinguished by the first byte of the message:
+
+  * 0 = Request Message,
+  * 1 = Command Message,
+  * 2 = Acknowledge Message,
+  * 3 = Read Fields,
+  * 4 = Read Fields Reply,
+  * 5 = Write Fields,
+  * 6 = Write Fields Reply
+
+The Maretron docs indicate a `command message` should be sent, implying the first byte == `1`.
+
+#### Command Group Function message - PGN 126208 (0x1ED00)
+
+The format of this message is as follows [per N2K documentation](https://www.nmea.org/Assets/20140109%20nmea-2000-corrigendum-tc201401031%20pgn%20126208.pdf).
+
+The payload data of this message identifies the PGN for which parameters will be changed, as kind of
+a generic interface for manipulating settings of arbitrary messages.  
+In our case the PGN of interest for the circuit breakers is 127501 (Binary Status Report)
+per the maretron documents (See notes in section below).  
+
+Following the PGN identification, we also define the quantity of filed id/field value pairs. i.e. the
+data in the _commanded_ PGN that we want to change.
+As such, this is a variable length message. FIeld ID lengths are fixed at 8 bits. The lengths of the
+associated `Values` is defined by the message definition for the PGN we are _commanding_.
+Individual fields are padded to 1 byte boundaries (per NMEA spec). 
+
+
+| Field name | length (bits) | Value | Notes |
+| :--------- | :-----------: | :---- | :---- |
+| Command group function code | 8 | 0x01 | Identify this is a `Command Message`
+| Commanded PGN | 24 | 0x1F20D (127501)| 
+| Priority Setting | 4 | 0x8 | Allows changing the priority of the Commanded PGN <br> 0x8 = Do not change priority
+| Reserved | 4 | 0xF |
+| Number of Pairs of Commanded Parameters to follow | 8 | 0x2 | 
+| Field number of first commanded parameter | 8 | 0x01? | Bank instance field in PGN 127501
+| Value field| 8 <br> (2bit field padded to byte boundary) | Bank instance field value as programmed on CLMD / as reported in 127501  (default 0x01???)
+| Parameter field | 8 | 0x02 - 0x0D | which breaker to command, 1 - 12 => 0x2 - 0x0D
+| Value Field | 8 <br> (2bit field padded to byte boundary) | 0x0 or 0x1 | breaker state, 0x0 = OFF, 0x1 = ON
+
+
+### CLMD12 NMEA 2000 Periodic Data Transmitted PGNs
+
 From [CLMD12UM_1.8 Appendix A](docs/CLMD12UM_1.8.pdf).
 
-__CLMD12 NMEA 2000® Periodic Data Transmitted PGNs__
 
 * PGN 127500 (0x1F20C) – Load Controller Connection State/Control
 
