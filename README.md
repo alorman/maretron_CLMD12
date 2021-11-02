@@ -61,7 +61,7 @@ Individual fields are padded to 1 byte boundaries (per NMEA spec).
 | Reserved | 4 | 0xF |
 | Number of Pairs of Commanded Parameters to follow | 8 | 0x2 | 
 | Field number of first commanded parameter | 8 | 0x01? | Bank instance field in PGN 127501
-| Value field| 8 <br> (2bit field padded to byte boundary) | Bank instance field value as programmed on CLMD / as reported in 127501  (default 0x01???)
+| Value field| 8 <br> (2bit field padded to byte boundary) | (default 0x01???) | Bank instance field value as programmed on CLMD / as reported in 127501  
 | Parameter field | 8 | 0x02 - 0x0D | which breaker to command, 1 - 12 => 0x2 - 0x0D
 | Value Field | 8 <br> (2bit field padded to byte boundary) | 0x0 or 0x1 | breaker state, 0x0 = OFF, 0x1 = ON
 
