@@ -66,6 +66,20 @@ Individual fields are padded to 1 byte boundaries (per NMEA spec).
 | Value Field | 8 <br> (2bit field padded to byte boundary) | 0x0 or 0x1 | breaker state, 0x0 = OFF, 0x1 = ON
 
 
+__Todo: update table & mention fastpacket ^__
+
+
+Examples:
+  * turn on channel 1:  
+    ```
+    cansend can0 0DED9050#E00A010DF201F802; cansend can0 0DED9050#E101200201FFFFFF
+    ```
+  * turn off channel 1:  
+    ```
+    cansend can0 0DED9050#E00A010DF201F802; cansend can0 0DED9050#E101200200FFFFFF
+    ```
+
+
 ### CLMD12 NMEA 2000 Periodic Data Transmitted PGNs
 
 From [CLMD12UM_1.8 Appendix A](docs/CLMD12UM_1.8.pdf).
