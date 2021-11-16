@@ -1,11 +1,23 @@
 # Maretron_MPower
 
-DC Load Controller Modules
+DC Load Controller Module
 
 * [Documentation](docs)
 * [Contents of USB DISK shipped with CLMD12](https://thayermahan-my.sharepoint.com/:f:/p/jcorcoran/EhA2ZhF0i9JKsjyyqnFF2ZcBiykFItC3XT-6K0nYPWfogw?e=kfqcGf)
   This includes documentation, training materials, and installers (N2KView, N2KAnalyzer, N2KExtractor, DSM250 Emulator) 
 
+[[_TOC_]]
+
+## Configuration
+
+  * Plug in Maretron USB100 gateway
+  * Open [N2KAnalyzer](https://www.maretron.com/products/N2KAnalyzer.php)
+  * Select the CLMD12 entry  
+    ![n2kanalyzer gui](img/N2KAnalyzer.png)
+
+  * Right click the CLMD12 entry, select `Configure Device`
+  * From the `Advanced` tab, set as follows:  
+    ![n2kanalyzer configuration > advanced](img/n2k_advanced.png)
 
 ## Wiring
 
