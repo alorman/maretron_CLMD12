@@ -18,7 +18,7 @@ DC Load Controller Module
   * Right click the CLMD12 entry, select `Configure Device`
 
   * From the `General` tab, configure output channels:
-    Of particular note, current rating does not default to the max pr channel, and `Inrush delay` defaults to 200 ms,
+    Of particular note, current rating does not default to the max per channel, and `Inrush delay` defaults to 200 ms,
     which could high power loads or brownouts for some loads. 
 
     ![configure output channels](img/output_channel_settings.png)
