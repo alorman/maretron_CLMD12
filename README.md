@@ -28,6 +28,69 @@ To establish N2K comms you need to:
 
 ## NMEA 2000 Messags
 
+### DC Voltage/Current Status message (PGN 127751)
+
+Sent periodically every 15 seconds.
+
+Contains the voltage and current status of each output channel.
+
+```
+  can0  19F30790   [8]  FF 00 71 00 32 00 00 FF
+  can0  19F30790   [8]  FF 01 71 00 00 00 00 FF
+  can0  19F30790   [8]  FF 02 00 00 00 00 00 FF
+  can0  19F30790   [8]  FF 03 00 00 00 00 00 FF
+  can0  19F30790   [8]  FF 04 00 00 00 00 00 FF
+  can0  19F30790   [8]  FF 05 00 00 00 00 00 FF
+  can0  19F30790   [8]  FF 06 00 00 00 00 00 FF
+  can0  19F30790   [8]  FF 07 00 00 00 00 00 FF
+  can0  19F30790   [8]  FF 08 00 00 00 00 00 FF
+  can0  19F30790   [8]  FF 09 00 00 00 00 00 FF
+  can0  19F30790   [8]  FF 0A 00 00 00 00 00 FF
+  can0  19F30790   [8]  FF 0B 00 00 00 00 00 FF
+
+  can0  19F30790   [8]  FF 00 71 00 BC 00 00 FF
+  can0  19F30790   [8]  FF 01 71 00 00 00 00 FF
+  can0  19F30790   [8]  FF 02 00 00 00 00 00 FF
+  can0  19F30790   [8]  FF 03 00 00 00 00 00 FF
+  can0  19F30790   [8]  FF 04 00 00 00 00 00 FF
+  can0  19F30790   [8]  FF 05 00 00 00 00 00 FF
+  can0  19F30790   [8]  FF 06 00 00 00 00 00 FF
+  can0  19F30790   [8]  FF 07 00 00 00 00 00 FF
+  can0  19F30790   [8]  FF 08 00 00 00 00 00 FF
+  can0  19F30790   [8]  FF 09 00 00 00 00 00 FF
+  can0  19F30790   [8]  FF 0A 00 00 00 00 00 FF
+  can0  19F30790   [8]  FF 0B 00 00 00 00 00 FF
+```
+
+In the above data capture we can see that output channels 1 and 2 are turned on (non-zero voltage output).
+Channel 1 is sourcing current, while channel two is sourcing not (zero draw). All other channels are off.
+
+#### Example decomp:
+
+```
+can0  19F30790   [8]  FF 00 71 00 BF 01 00 FF
+```
+
+__Contents of the CAN message header:__
+
+| Field name | length (bits) | Value | Notes |
+| :--------- | :-----------: | :---- | :---- |
+| Priority | 3 | 0b110 | Defined by the source device.
+| PGN | 18 | 0x1F307 |
+| Source address | 8 | 0x90 | Unique ID. _Note: not the same as the device instance in photo above_
+
+__Contents of the data frame:__
+
+| Field name    | length (bits) | Value | Notes |
+| :------------ | :-----------: | :---- | :---- |
+| Sequnce ID    | 8 | 0xFF | Hard coded per [Maretron documentation](https://www.maretron.com/support/manuals/CLMD16UM_1.9.pdf)
+| Connection ID | 8 | 0x00 | The output channel 0x0 - 0xB -> Output 1 - 12 
+| DC Voltage    | 16 | 0x7100 = 113 <br> LSB = 0.1V <br> 113 * 0.1 = 11.3V | Byte swap. Note this will report a voltage when the breaker is tripped.
+| DC Current    | 16 | 0xBF01 = 447 <br> LSB = 0.01A <br> 447 * 0.01 = 4.47A | Byte swap. 
+| Unknown       | 8 | 0x00 | Unused / unknown
+| Reserved      | 8 | 0xFF | Hard coded 0xFF per Maretron documentation
+
+
 ### Command messages (PGN 126208)
 
 The CLMD12 allows for control of circuit breaker states through PGN 126208 (Request/Command/Acknowledge Group Function).
@@ -62,8 +125,9 @@ Following the PGN identification, we also define the quantity of filed id/field 
 data in the _commanded_ PGN that we want to change.
 As such, this is a variable length message. FIeld ID lengths are fixed at 8 bits. The lengths of the
 associated `Values` is defined by the message definition for the PGN we are _commanding_.
-Individual fields are padded to 1 byte boundaries (per NMEA spec). 
+Individual fields in the data frame are padded to 1 byte boundaries (per NMEA spec). 
 
+Data 
 
 | Field name | length (bits) | Value | Notes |
 | :--------- | :-----------: | :---- | :---- |
