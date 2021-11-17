@@ -135,22 +135,28 @@ As such, this is a variable length message. FIeld ID lengths are fixed at 8 bits
 associated `Values` is defined by the message definition for the PGN we are _commanding_.
 Individual fields in the data frame are padded to 1 byte boundaries (per NMEA spec). 
 
-Data 
+The contents of this message is longer than 8bytes, and as a result must span multiple packets.
+The provision for this in NMEA2K is called `fast packet` and is described in more detail
+[here](https://gitlab.tmpriv.com/thayermahan/documentation/can_notes).
+
+
+Data frame contents:
 
 | Field name | length (bits) | Value | Notes |
 | :--------- | :-----------: | :---- | :---- |
+| Fast packet header | 8 | 0xE0 | This message will end up spanning multiple packets (longer than 8 bytes) this header flags that a sequence of messages will follow.
+| Unknown | 8 | 0x0A | TBD
 | Command group function code | 8 | 0x01 | Identify this is a `Command Message`
-| Commanded PGN | 24 | 0x1F20D (127501)| 
-| Priority Setting | 4 | 0x8 | Allows changing the priority of the Commanded PGN <br> 0x8 = Do not change priority
-| Reserved | 4 | 0xF |
+| Commanded PGN | 24 | 0x1F20D (127501) <br> byte swapping leads to 0x0DF201 | 
+| Priority Setting | 4 | 0x8 | Allows changing the priority of the Commanded PGN <br> 0x8 = Do not change priority <br> note this is the lower nibble of the byte
+| Reserved | 4 | 0xF | Not this is the upper nibble of the byte
 | Number of Pairs of Commanded Parameters to follow | 8 | 0x2 | 
-| Field number of first commanded parameter | 8 | 0x01? | Bank instance field in PGN 127501
-| Value field| 8 <br> (2bit field padded to byte boundary) | (default 0x01???) | Bank instance field value as programmed on CLMD / as reported in 127501  
+| - | - | - | We've reached the data frame 8byte limit. Start next packet
+| Fast packet header | 8 0xE1 | indicates the next frame of the `fast packet` 
+| Field number of first commanded parameter | 8 | 0x01 | Bank instance field in PGN 127501
+| Value field| 8 <br> (2bit field padded to byte boundary) | (default 0x20) | Bank instance field value as programmed on CLMD (above) or as reported in PGN 127501. <br> default: 32 = 0x20  
 | Parameter field | 8 | 0x02 - 0x0D | which breaker to command, 1 - 12 => 0x2 - 0x0D
-| Value Field | 8 <br> (2bit field padded to byte boundary) | 0x0 or 0x1 | breaker state, 0x0 = OFF, 0x1 = ON
-
-
-__Todo: update table & mention fastpacket ^__
+| Value Field | 8 <br> (2bit field padded to byte boundary) | 0x0 or 0x1 | breaker state, `0x0` = `OFF`, `0x1` = `ON`
 
 
 Examples:
@@ -161,6 +167,14 @@ Examples:
   * turn off channel 1:  
     ```
     cansend can0 0DED9050#E00A010DF201F802; cansend can0 0DED9050#E101200200FFFFFF
+    ```
+  * turn on channel 2:  
+    ```
+    cansend can0 0DED9050#E00A010DF201F802; cansend can0 0DED9050#E101200301FFFFFF
+    ```
+  * turn off channel 2:  
+    ```
+    cansend can0 0DED9050#E00A010DF201F802; cansend can0 0DED9050#E101200300FFFFFF
     ```
 
 
