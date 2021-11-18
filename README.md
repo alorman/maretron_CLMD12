@@ -99,6 +99,63 @@ __Contents of the data frame:__
 | Reserved      | 8 | 0xFF | Hard coded 0xFF per Maretron documentation
 
 
+### Circuit Breaker State status message (PGN ):
+
+Sent once every 15 seconds, and in response to state changes.
+
+Each circuit breaker state is encoded as a two bit value:
+
+| Bit 0 | Bit 1 | Value | Description |
+| :---: | :---: | :---- | :---------- |
+| 1 | 0 | 0x1 | Breaker `ON`
+| 0 | 1 | 0x2 | Breaker `Tripped`
+| 0 | 0 | 0x0 | Breaker `OFF` and not `Tripped`
+| 1 | 1 | 0x3 | Breaker `ON` and `Tripped`
+
+
+Each input state is encoded as a two bit value:
+| Bit 0 | Bit 1 | Value | Description |
+| :---: | :---: | :---- | :---------- |
+| 0 | 0 | 0x0 | Input off (per device configuration, by default this is a floating wire)
+| 1 | 0 | 0x1 | Input on (per device configuration, by default this is low OR pulled high)
+| 0 | 1 | 0x2 | Unused
+| 1 | 1 | 0x3 | Unused
+
+#### Example decomp:
+
+```
+  can0  0DF20D90   [8]  20 52 00 05 05 C1 FF FF
+```
+
+__Contents of the data frame:__
+
+| Field number  | Field name    | length (bits) | Value | Notes |
+| :-----------: | :------------ | :-----------: | :---- | :---- |
+| 1 | Bank instance | 8 | 0x20 = 32 | Field value as programmed on CLMD (above)
+| 2 | Breaker channel #1 | 2 | 0x2 | Breaker on and tripped
+| 3 | Breaker channel #2 | 2 | 0x0 | Breaker off
+| 4 | Breaker channel #3 | 2 | 0x1 | Breaker on
+| 5 | Breaker channel #4 | 2 | 0x1 | Breaker on
+| 6 | Breaker channel #5 | 2 | 0x0 | Breaker off
+| 7 | Breaker channel #6 | 2 | 0x0 | Breaker off
+| 8 | Breaker channel #7 | 2 | 0x0 | Breaker off
+| 9 | Breaker channel #8 | 2 | 0x0 | Breaker off
+| 10 | Breaker channel #9 | 2 | 0x1 | Breaker on
+| 11 | Breaker channel #10 | 2 | 0x1 | Breaker on
+| 12 | Breaker channel #11 | 2 | 0x0 | Breaker off
+| 13 | Breaker channel #12 | 2 | 0x0 | Breaker off
+| 14 | Input channel #1 | 2 | 0x1 | Input on
+| 15 | Input channel #2 | 2 | 0x1 | Input on
+| 16 | Input channel #3 | 2 | 0x0 | Input off
+| 17 | Input channel #4 | 2 | 0x0 | Input off
+| 18 | Input channel #5 | 2 | 0x1 | Input on
+| 19 | Input channel #6 | 2 | 0x0 | Input off
+| 20 | Input channel #7 | 2 | 0x0 | Input off
+| N/A | Reserved | 2 | 0x3 | upper-most bits of byte 6
+| N/A | Reserved | 16 |0xFFFF |
+
+Field numbers above correspond to commanded paramter numbers used in `126208`
+
 ### Command messages (PGN 126208)
 
 The CLMD12 allows for control of circuit breaker states through PGN 126208 (Request/Command/Acknowledge Group Function).
@@ -154,7 +211,7 @@ Data frame contents:
 | - | - | - | We've reached the data frame 8byte limit. Start next packet
 | Fast packet header | 8 0xE1 | indicates the next frame of the `fast packet` 
 | Field number of first commanded parameter | 8 | 0x01 | Bank instance field in PGN 127501
-| Value field| 8 <br> (2bit field padded to byte boundary) | (default 0x20) | Bank instance field value as programmed on CLMD (above) or as reported in PGN 127501. <br> default: 32 = 0x20  
+| Value field| 8 <br> (2bit field padded to byte boundary) | (default 0x20) | Bank instance field value as programmed on CLMD (above), as reported in PGN 127501. <br> default: 32 = 0x20  
 | Parameter field | 8 | 0x02 - 0x0D | which breaker to command, 1 - 12 => 0x2 - 0x0D
 | Value Field | 8 <br> (2bit field padded to byte boundary) | 0x0 or 0x1 | breaker state, `0x0` = `OFF`, `0x1` = `ON`
 
