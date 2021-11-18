@@ -23,6 +23,18 @@ DC Load Controller Module
 
     ![configure output channels](img/output_channel_settings.png)
 
+  * From the `Discrete I/O` tab, configure how and if the input channls should control the output channels:
+
+    By default "on" states of the inputs toggle the output channels on/off.
+
+    ![discrete i/o settings](img/io_settings.png)
+
+  * From the `Inputs` tab, configure the `OnLevel` for each digital input channel.
+
+    Note by default the "on" state corresponds to the input being pulled either high __or__ low. Off is floating. 
+
+    ![inputs tab](img/inputs.png)
+
   * From the `Advanced` tab, set as follows:  
     ![n2kanalyzer configuration > advanced](img/n2k_advanced.png)
 
