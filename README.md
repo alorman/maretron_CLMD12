@@ -1,10 +1,11 @@
-# Maretron_MPower
+# Maretron_MPower (CLMD)
 
 DC Load Controller Module
 
 * [Documentation](docs)
 * [Contents of USB DISK shipped with CLMD12](https://thayermahan-my.sharepoint.com/:f:/p/jcorcoran/EhA2ZhF0i9JKsjyyqnFF2ZcBiykFItC3XT-6K0nYPWfogw?e=kfqcGf)
   This includes documentation, training materials, and installers (N2KView, N2KAnalyzer, N2KExtractor, DSM250 Emulator) 
+* [Photos of device internals (teardown)](https://thayermahan-my.sharepoint.com/:f:/p/jcorcoran/Ek5BNGozaKVOlN0toJKLDpABl3fM2MS0jYa-kdxh5eg-kQ?e=UJaBeo)
 
 [[_TOC_]]
 
