@@ -215,7 +215,7 @@ Data frame contents:
 | Field name | length (bits) | Value | Notes |
 | :--------- | :-----------: | :---- | :---- |
 | Fast packet header | 8 | 0xE0 | This message will end up spanning multiple packets (longer than 8 bytes) this header flags that a sequence of messages will follow.
-| Unknown | 8 | 0x0A | TBD
+| Message Length | 8 | 0x0A | The number of bytes that follow, the length of data fields to that follow, this is only present in the first fast packet.
 | Command group function code | 8 | 0x01 | Identify this is a `Command Message`
 | Commanded PGN | 24 | 0x1F20D (127501) <br> byte swapping leads to 0x0DF201 | 
 | Priority Setting | 4 | 0x8 | Allows changing the priority of the Commanded PGN <br> 0x8 = Do not change priority <br> note this is the lower nibble of the byte
